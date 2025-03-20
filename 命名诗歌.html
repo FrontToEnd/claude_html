@@ -671,7 +671,13 @@
           exportCard.style.display = 'none';
           
           // 将canvas转换为图片URL
-          const imageUrl = canvas.toDataURL('image/png');
+          let imageUrl;
+          try {
+            imageUrl = canvas.toDataURL('image/png');
+          } catch (e) {
+            console.warn('PNG导出失败，尝试JPEG:', e);
+            imageUrl = canvas.toDataURL('image/jpeg', 0.8);
+          }
           
           // 创建下载链接
           const downloadLink = document.createElement('a');

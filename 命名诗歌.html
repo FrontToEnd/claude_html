@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>《命名》</title>
+<link rel="stylesheet" href="https://chinese-fonts-cdn.deno.dev/packages/hwmct/dist/汇文明朝体/result.css">
+<style>
+  body {
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background-color: #f8f8f8;
+  }
+  
+  .poem-container {
+    width: 400px;
+    height: 533px;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  }
+  
+  .paper-background {
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(to bottom, #f5f2e9 0%, #c4dccd 40%, #f5f2e9 100%);
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 1;
+  }
+  
+  .paper-texture {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 2;
+    opacity: 0.2;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='533' viewBox='0 0 400 533'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='400' height='533' filter='url(%23noise)' opacity='1'/%3E%3C/svg%3E");
+  }
+  
+  .poem-content {
+    position: relative;
+    z-index: 3;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    padding: 20px;
+    box-sizing: border-box;
+    font-family: "Huiwen-mincho", "汇文明朝体", serif;
+    color: #000;
+  }
+  
+  .poem-title {
+    font-size: 28px;
+    margin-bottom: 40px;
+    font-weight: normal;
+  }
+  
+  .poem-line {
+    font-size: 22px;
+    line-height: 1.8;
+    margin: 0;
+    text-align: center;
+  }
+  
+  .poem-author {
+    position: absolute;
+    bottom: 60px;
+    right: 60px;
+    font-size: 16px;
+  }
+  
+  /* 添加一些随机纤维效果 */
+  .fiber {
+    position: absolute;
+    background: #000;
+    opacity: 0.03;
+    z-index: 2;
+  }
+</style>
+</head>
+<body>
+<div class="poem-container">
+  <div class="paper-background"></div>
+  <div class="paper-texture"></div>
+  
+  <!-- 随机纤维效果 -->
+  <div class="fiber" style="width: 0.3px; height: 10px; top: 80px; left: 100px; transform: rotate(30deg);"></div>
+  <div class="fiber" style="width: 0.3px; height: 15px; top: 130px; left: 200px; transform: rotate(-20deg);"></div>
+  <div class="fiber" style="width: 0.3px; height: 12px; top: 180px; left: 300px; transform: rotate(45deg);"></div>
+  <div class="fiber" style="width: 0.2px; height: 8px; top: 250px; left: 150px; transform: rotate(15deg);"></div>
+  <div class="fiber" style="width: 0.2px; height: 6px; top: 320px; left: 190px; transform: rotate(-25deg);"></div>
+  <div class="fiber" style="width: 0.2px; height: 7px; top: 370px; left: 250px; transform: rotate(10deg);"></div>
+  <div class="fiber" style="width: 0.2px; height: 9px; top: 420px; left: 300px; transform: rotate(-15deg);"></div>
+  
+  <div class="poem-content">
+    <h1 class="poem-title">《命名》</h1>
+    <p class="poem-line">我们给世界命名</p>
+    <p class="poem-line">好像能够理解它</p>
+    <p class="poem-line">但真相如同北极星</p>
+    <p class="poem-line">指引方向却永不可及</p>
+    <div class="poem-author">—— by 云中江树</div>
+  </div>
+</div>
+
+<script>
+  // 添加更多随机纤维效果
+  function addRandomFibers(count) {
+    const container = document.querySelector('.poem-container');
+    for (let i = 0; i < count; i++) {
+      const fiber = document.createElement('div');
+      fiber.className = 'fiber';
+      
+      // 随机位置和角度
+      const top = Math.random() * 533;
+      const left = Math.random() * 400;
+      const width = Math.random() * 0.2 + 0.1; // 0.1px - 0.3px
+      const height = Math.random() * 10 + 3; // 3px - 13px
+      const rotation = Math.random() * 360;
+      const opacity = Math.random() * 0.03 + 0.01; // 0.01 - 0.04
+      
+      fiber.style.cssText = `
+        width: ${width}px;
+        height: ${height}px;
+        top: ${top}px;
+        left: ${left}px;
+        transform: rotate(${rotation}deg);
+        opacity: ${opacity};
+      `;
+      
+      container.appendChild(fiber);
+    }
+  }
+  
+  // 添加50个随机纤维
+  addRandomFibers(50);
+</script>
+</body>
+</html>

@@ -1,148 +1,779 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>《命名》</title>
-<link rel="stylesheet" href="https://chinese-fonts-cdn.deno.dev/packages/hwmct/dist/汇文明朝体/result.css">
-<style>
-  body {
-    margin: 0;
-    padding: 0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 100vh;
-    background-color: #f8f8f8;
-  }
-  
-  .poem-container {
-    width: 400px;
-    height: 533px;
-    position: relative;
-    overflow: hidden;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-  }
-  
-  .paper-background {
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(to bottom, #f5f2e9 0%, #c4dccd 40%, #f5f2e9 100%);
-    position: absolute;
-    top: 0;
-    left: 0;
-    z-index: 1;
-  }
-  
-  .paper-texture {
-    width: 100%;
-    height: 100%;
-    position: absolute;
-    top: 0;
-    left: 0;
-    z-index: 2;
-    opacity: 0.2;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='533' viewBox='0 0 400 533'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='400' height='533' filter='url(%23noise)' opacity='1'/%3E%3C/svg%3E");
-  }
-  
-  .poem-content {
-    position: relative;
-    z-index: 3;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    height: 100%;
-    padding: 20px;
-    box-sizing: border-box;
-    font-family: "Huiwen-mincho", "汇文明朝体", serif;
-    color: #000;
-  }
-  
-  .poem-title {
-    font-size: 28px;
-    margin-bottom: 40px;
-    font-weight: normal;
-  }
-  
-  .poem-line {
-    font-size: 22px;
-    line-height: 1.8;
-    margin: 0;
-    text-align: center;
-  }
-  
-  .poem-author {
-    position: absolute;
-    bottom: 60px;
-    right: 60px;
-    font-size: 16px;
-  }
-  
-  /* 添加一些随机纤维效果 */
-  .fiber {
-    position: absolute;
-    background: #000;
-    opacity: 0.03;
-    z-index: 2;
-  }
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>可编辑诗歌卡片</title>
+  <link rel="stylesheet" href="https://chinese-fonts-cdn.deno.dev/packages/hwmct/dist/汇文明朝体/result.css">
+  <!-- 引入html2canvas库 -->
+  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      background-color: #f8f8f8;
+      position: relative;
+      font-family: "Huiwen-mincho", "汇文明朝体", serif;
+    }
+    
+    .poem-container {
+      width: 400px;
+      height: 533px;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+      transition: all 0.5s ease;
+    }
+    
+    /* 移动端适配 */
+    @media (max-width: 480px) {
+      .poem-container {
+        width: 90vw;
+        height: calc(90vw * 1.33); /* 保持比例 */
+        margin: 20px auto;
+      }
+    }
+    
+    .paper-background {
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(to bottom, #f5f2e9 0%, #c4dccd 40%, #f5f2e9 100%);
+      position: absolute;
+      top: 0;
+      left: 0;
+      z-index: 1;
+      transition: background 0.5s ease;
+    }
+    
+    .paper-texture {
+      width: 100%;
+      height: 100%;
+      position: absolute;
+      top: 0;
+      left: 0;
+      z-index: 2;
+      opacity: 0.2;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='533' viewBox='0 0 400 533'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='400' height='533' filter='url(%23noise)' opacity='1'/%3E%3C/svg%3E");
+    }
+    
+    .poem-content {
+      position: relative;
+      z-index: 3;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
+      padding: 20px;
+      box-sizing: border-box;
+      font-family: "Huiwen-mincho", "汇文明朝体", serif;
+      color: #000;
+    }
+    
+    /* 可编辑元素的通用样式 */
+    .editable {
+      background: transparent;
+      border: none;
+      text-align: center;
+      font-family: "Huiwen-mincho", "汇文明朝体", serif;
+      color: #000;
+      resize: none;
+      overflow: hidden;
+      transition: border 0.3s ease;
+      outline: none;
+    }
+    
+    .editable:focus {
+      border-bottom: 1px dashed rgba(0, 0, 0, 0.3);
+    }
+    
+    .editable:hover:not(:focus) {
+      background-color: rgba(0, 0, 0, 0.03);
+    }
+    
+    /* 标题样式 */
+    .poem-title {
+      font-size: 28px;
+      margin-bottom: 40px;
+      font-weight: normal;
+      width: 80%;
+      max-width: 300px;
+    }
+    
+    /* 移动端标题适配 */
+    @media (max-width: 480px) {
+      .poem-title {
+        font-size: 22px;
+        margin-bottom: 20px;
+      }
+    }
+    
+    /* 诗句样式 */
+    .poem-lines-container {
+      width: 80%;
+      max-width: 300px;
+      margin: 0 auto;
+    }
+    
+    .poem-lines {
+      font-size: 22px;
+      line-height: 1.8;
+      min-height: 160px;
+      white-space: pre-wrap;
+    }
+    
+    /* 移动端诗句适配 */
+    @media (max-width: 480px) {
+      .poem-lines {
+        font-size: 18px;
+        min-height: 120px;
+      }
+    }
+    
+    /* 作者样式 */
+    .poem-author-container {
+      position: absolute;
+      bottom: 60px;
+      right: 60px;
+      display: flex;
+      align-items: center;
+    }
+    
+    /* 移动端作者适配 */
+    @media (max-width: 480px) {
+      .poem-author-container {
+        bottom: 30px;
+        right: 30px;
+      }
+    }
+    
+    .poem-author-prefix {
+      font-size: 16px;
+      margin-right: 5px;
+    }
+    
+    .poem-author {
+      font-size: 16px;
+      width: 100px;
+      text-align: left;
+    }
+    
+    /* 移动端作者文字适配 */
+    @media (max-width: 480px) {
+      .poem-author-prefix,
+      .poem-author {
+        font-size: 14px;
+      }
+      
+      .poem-author {
+        width: 80px;
+      }
+    }
+    
+    /* 添加一些随机纤维效果 */
+    .fiber {
+      position: absolute;
+      background: #000;
+      opacity: 0.03;
+      z-index: 2;
+    }
+    
+    /* 按钮容器 */
+    .buttons-container {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      z-index: 100;
+    }
+    
+    /* 移动端按钮适配 */
+    @media (max-width: 480px) {
+      .buttons-container {
+        bottom: 10px;
+        right: 10px;
+        flex-direction: row;
+        gap: 8px;
+      }
+    }
+    
+    /* 按钮通用样式 */
+    .action-button {
+      padding: 10px 15px;
+      background: linear-gradient(145deg, #f0f0f0, #e6e6e6);
+      border: none;
+      border-radius: 8px;
+      box-shadow: 5px 5px 10px #d1d1d1, -5px -5px 10px #ffffff;
+      font-family: "Huiwen-mincho", "汇文明朝体", serif;
+      font-size: 16px;
+      color: #333;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    /* 移动端按钮适配 */
+    @media (max-width: 480px) {
+      .action-button {
+        padding: 8px 12px;
+        font-size: 14px;
+        gap: 6px;
+      }
+    }
+    
+    .action-button:hover {
+      box-shadow: 3px 3px 6px #d1d1d1, -3px -3px 6px #ffffff;
+      transform: translateY(-2px);
+    }
+    
+    .action-button:active {
+      box-shadow: inset 2px 2px 5px #d1d1d1, inset -2px -2px 5px #ffffff;
+      transform: translateY(0);
+    }
+    
+    /* 下载按钮特殊样式 */
+    .download-button {
+      background: linear-gradient(145deg, #e8f4ff, #d8e9ff);
+    }
+    
+    .download-button:hover {
+      background: linear-gradient(145deg, #d8e9ff, #c8dfff);
+    }
+    
+    /* 随机颜色按钮特殊样式 */
+    .color-button {
+      background: linear-gradient(145deg, #f0f0f0, #e6e6e6);
+    }
+    
+    .color-preview {
+      display: inline-block;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background-color: #c4dccd;
+      border: 1px solid #aaa;
+    }
+    
+    /* 移动端颜色预览适配 */
+    @media (max-width: 480px) {
+      .color-preview {
+        width: 14px;
+        height: 14px;
+      }
+    }
+    
+    /* 加载指示器 */
+    .loading-indicator {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(255, 255, 255, 0.7);
+      z-index: 1000;
+      justify-content: center;
+      align-items: center;
+    }
+    
+    .spinner {
+      width: 40px;
+      height: 40px;
+      border: 4px solid rgba(0, 0, 0, 0.1);
+      border-radius: 50%;
+      border-top-color: #3498db;
+      animation: spin 1s ease-in-out infinite;
+    }
+    
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+    
+    /* 下载成功提示 */
+    .download-toast {
+      position: fixed;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%) translateY(-100px);
+      background-color: #4CAF50;
+      color: white;
+      padding: 12px 24px;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      opacity: 0;
+      transition: all 0.5s ease;
+      z-index: 1001;
+    }
+    
+    .download-toast.show {
+      transform: translateX(-50%) translateY(0);
+      opacity: 1;
+    }
+    
+    /* 用于导出的静态元素 */
+    .export-container {
+      display: none;
+    }
+    
+    .export-title, .export-lines, .export-author {
+      font-family: "Huiwen-mincho", "汇文明朝体", serif;
+      color: #000;
+    }
+    
+    .export-title {
+      font-size: 28px;
+      margin-bottom: 40px;
+      font-weight: normal;
+      text-align: center;
+    }
+    
+    .export-lines {
+      font-size: 22px;
+      line-height: 1.8;
+      text-align: center;
+      white-space: pre-wrap;
+    }
+    
+    /* 导出作者容器样式 */
+    .export-author-container {
+      position: absolute;
+      bottom: 60px;
+      right: 60px;
+      display: flex;
+      align-items: center;
+    }
+    
+    .export-author-prefix {
+      font-size: 16px;
+      margin-right: 5px;
+    }
+    
+    .export-author {
+      font-size: 16px;
+      text-align: left;
+    }
+    
+    /* 移动端导出元素适配 */
+    @media (max-width: 480px) {
+      .export-title {
+        font-size: 22px;
+        margin-bottom: 20px;
+      }
+      
+      .export-lines {
+        font-size: 18px;
+      }
+      
+      .export-author-container {
+        bottom: 30px;
+        right: 30px;
+      }
+      
+      .export-author-prefix,
+      .export-author {
+        font-size: 14px;
+      }
+    }
+  </style>
 </head>
 <body>
-<div class="poem-container">
-  <div class="paper-background"></div>
-  <div class="paper-texture"></div>
-  
-  <!-- 随机纤维效果 -->
-  <div class="fiber" style="width: 0.3px; height: 10px; top: 80px; left: 100px; transform: rotate(30deg);"></div>
-  <div class="fiber" style="width: 0.3px; height: 15px; top: 130px; left: 200px; transform: rotate(-20deg);"></div>
-  <div class="fiber" style="width: 0.3px; height: 12px; top: 180px; left: 300px; transform: rotate(45deg);"></div>
-  <div class="fiber" style="width: 0.2px; height: 8px; top: 250px; left: 150px; transform: rotate(15deg);"></div>
-  <div class="fiber" style="width: 0.2px; height: 6px; top: 320px; left: 190px; transform: rotate(-25deg);"></div>
-  <div class="fiber" style="width: 0.2px; height: 7px; top: 370px; left: 250px; transform: rotate(10deg);"></div>
-  <div class="fiber" style="width: 0.2px; height: 9px; top: 420px; left: 300px; transform: rotate(-15deg);"></div>
-  
-  <div class="poem-content">
-    <h1 class="poem-title">《命名》</h1>
-    <p class="poem-line">我们给世界命名</p>
-    <p class="poem-line">好像能够理解它</p>
-    <p class="poem-line">但真相如同北极星</p>
-    <p class="poem-line">指引方向却永不可及</p>
-    <div class="poem-author">—— by chuck</div>
+  <!-- 编辑用的卡片 -->
+  <div class="poem-container" id="poemCard">
+    <div class="paper-background"></div>
+    <div class="paper-texture"></div>
+    
+    <!-- 随机纤维效果 -->
+    <div class="fiber" style="width: 0.3px; height: 10px; top: 80px; left: 100px; transform: rotate(30deg);"></div>
+    <div class="fiber" style="width: 0.3px; height: 15px; top: 130px; left: 200px; transform: rotate(-20deg);"></div>
+    <div class="fiber" style="width: 0.3px; height: 12px; top: 180px; left: 300px; transform: rotate(45deg);"></div>
+    <div class="fiber" style="width: 0.2px; height: 8px; top: 250px; left: 150px; transform: rotate(15deg);"></div>
+    <div class="fiber" style="width: 0.2px; height: 6px; top: 320px; left: 190px; transform: rotate(-25deg);"></div>
+    <div class="fiber" style="width: 0.2px; height: 7px; top: 370px; left: 250px; transform: rotate(10deg);"></div>
+    <div class="fiber" style="width: 0.2px; height: 9px; top: 420px; left: 300px; transform: rotate(-15deg);"></div>
+    
+    <div class="poem-content">
+      <!-- 可编辑的标题 -->
+      <div class="editable poem-title" id="poemTitle" contenteditable="true" spellcheck="false">《座右铭》</div>
+      
+      <!-- 可编辑的诗句 -->
+      <div class="poem-lines-container">
+        <div class="editable poem-lines" id="poemLines" contenteditable="true" spellcheck="false">日拱一卒
+功不唐捐
+        </div>
+      </div>
+      
+      <!-- 可编辑的作者 -->
+      <div class="poem-author-container">
+        <span class="poem-author-prefix">—— by</span>
+        <div class="editable poem-author" id="poemAuthor" contenteditable="true" spellcheck="false">chuck</div>
+      </div>
+    </div>
   </div>
-</div>
-
-<script>
-  // 添加更多随机纤维效果
-  function addRandomFibers(count) {
-    const container = document.querySelector('.poem-container');
-    for (let i = 0; i < count; i++) {
-      const fiber = document.createElement('div');
-      fiber.className = 'fiber';
-      
-      // 随机位置和角度
-      const top = Math.random() * 533;
-      const left = Math.random() * 400;
-      const width = Math.random() * 0.2 + 0.1; // 0.1px - 0.3px
-      const height = Math.random() * 10 + 3; // 3px - 13px
-      const rotation = Math.random() * 360;
-      const opacity = Math.random() * 0.03 + 0.01; // 0.01 - 0.04
-      
-      fiber.style.cssText = `
-        width: ${width}px;
-        height: ${height}px;
-        top: ${top}px;
-        left: ${left}px;
-        transform: rotate(${rotation}deg);
-        opacity: ${opacity};
-      `;
-      
-      container.appendChild(fiber);
-    }
-  }
   
-  // 添加50个随机纤维
-  addRandomFibers(50);
-</script>
-</body>
-</html>
+  <!-- 导出用的隐藏卡片（将在导出时复制内容） -->
+  <div class="poem-container export-container" id="exportCard">
+    <div class="paper-background"></div>
+    <div class="paper-texture"></div>
+    
+    <!-- 随机纤维效果将被复制 -->
+    
+    <div class="poem-content">
+      <!-- 静态标题 -->
+      <div class="export-title" id="exportTitle">《座右铭》</div>
+      
+      <!-- 静态诗句 -->
+      <div class="poem-lines-container">
+        <div class="export-lines" id="exportLines">日拱一卒
+功不唐捐
+        </div>
+      </div>
+      
+      <!-- 静态作者 -->
+      <div class="export-author-container">
+        <span class="export-author-prefix">—— by</span>
+        <span class="export-author" id="exportAuthor"> chuck</span>
+      </div>
+    </div>
+  </div>
+  
+  <!-- 按钮容器 -->
+  <div class="buttons-container">
+    <button class="action-button download-button" id="downloadBtn">
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+        <polyline points="7 10 12 15 17 10"></polyline>
+        <line x1="12" y1="15" x2="12" y2="3"></line>
+      </svg>
+      <span class="button-text">下载图片</span>
+    </button>
+    <button class="action-button color-button" id="randomColorBtn">
+      <span class="color-preview" id="colorPreview"></span>
+      <span class="button-text">随机颜色</span>
+    </button>
+  </div>
+  
+  <!-- 加载指示器 -->
+  <div class="loading-indicator" id="loadingIndicator">
+    <div class="spinner"></div>
+  </div>
+  
+  <!-- 下载成功提示 -->
+  <div class="download-toast" id="downloadToast">图片已保存</div>
+  
+  <script>
+    // 检测是否为移动设备
+    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    
+    // 添加更多随机纤维效果
+    function addRandomFibers(count) {
+      const container = document.querySelector('.poem-container');
+      for (let i = 0; i < count; i++) {
+        const fiber = document.createElement('div');
+        fiber.className = 'fiber';
+        
+        // 随机位置和角度
+        const top = Math.random() * container.offsetHeight;
+        const left = Math.random() * container.offsetWidth;
+        const width = Math.random() * 0.2 + 0.1; // 0.1px - 0.3px
+        const height = Math.random() * 10 + 3; // 3px - 13px
+        const rotation = Math.random() * 360;
+        const opacity = Math.random() * 0.03 + 0.01; // 0.01 - 0.04
+        
+        fiber.style.cssText = `
+          width: ${width}px;
+          height: ${height}px;
+          top: ${top}px;
+          left: ${left}px;
+          transform: rotate(${rotation}deg);
+          opacity: ${opacity};
+        `;
+        
+        container.appendChild(fiber);
+      }
+    }
+    
+    // 生成随机柔和颜色
+    function getRandomSoftColor() {
+      // 使用柔和的色调范围，适合作为背景
+      const h = Math.floor(Math.random() * 360); // 色相
+      const s = Math.floor(Math.random() * 30) + 20; // 饱和度 20-50%
+      const l = Math.floor(Math.random() * 15) + 75; // 亮度 75-90%
+      return `hsl(${h}, ${s}%, ${l}%)`;
+    }
+    
+    // 更新背景颜色
+    function updateBackgroundColor() {
+      console.log("更新背景颜色");
+      const newColor = getRandomSoftColor();
+      const paperBackgrounds = document.querySelectorAll('.paper-background');
+      const colorPreview = document.getElementById('colorPreview');
+      
+      // 更新按钮中的颜色预览
+      colorPreview.style.backgroundColor = newColor;
+      
+      // 更新所有背景渐变（包括导出用的卡片）
+      paperBackgrounds.forEach(bg => {
+        bg.style.background = `linear-gradient(to bottom, #f5f2e9 0%, ${newColor} 40%, #f5f2e9 100%)`;
+      });
+      
+      // 保存颜色到本地存储
+      try {
+        localStorage.setItem('poemBackgroundColor', newColor);
+      } catch (e) {
+        console.log('无法保存颜色到本地存储');
+      }
+    }
+    
+    // 显示加载指示器
+    function showLoading() {
+      document.getElementById('loadingIndicator').style.display = 'flex';
+    }
+    
+    // 隐藏加载指示器
+    function hideLoading() {
+      document.getElementById('loadingIndicator').style.display = 'none';
+    }
+    
+    // 显示下载成功提示
+    function showToast(message) {
+      const toast = document.getElementById('downloadToast');
+      toast.textContent = message || '图片已保存';
+      toast.classList.add('show');
+      
+      setTimeout(() => {
+        toast.classList.remove('show');
+      }, 3000);
+    }
+    
+    // 同步编辑内容到导出卡片，确保换行符被保留
+    function syncContentToExport() {
+      // 同步标题
+      document.getElementById('exportTitle').textContent = document.getElementById('poemTitle').textContent;
+      
+      // 同步诗句内容，保留换行符
+      const poemLinesContent = document.getElementById('poemLines').innerHTML
+        .replace(/<div>/g, '\n')  // 将div标签转换为换行符
+        .replace(/<\/div>/g, '')  // 移除结束div标签
+        .replace(/<br>/g, '\n');  // 将br标签转换为换行符
+      
+      // 使用textContent设置内容，这样换行符会被正确解释
+      document.getElementById('exportLines').textContent = poemLinesContent;
+      
+      // 同步作者
+      document.getElementById('exportAuthor').textContent = document.getElementById('poemAuthor').textContent;
+    }
+    
+    // 复制纤维效果到导出卡片
+    function copyFibersToExport() {
+      // 清除导出卡片中的旧纤维
+      const exportCard = document.getElementById('exportCard');
+      const oldFibers = exportCard.querySelectorAll('.fiber');
+      oldFibers.forEach(fiber => fiber.remove());
+      
+      // 复制编辑卡片中的纤维到导出卡片
+      const fibers = document.getElementById('poemCard').querySelectorAll('.fiber');
+      fibers.forEach(fiber => {
+        const clonedFiber = fiber.cloneNode(true);
+        exportCard.appendChild(clonedFiber);
+      });
+    }
+    
+    // 下载图片
+    async function downloadImage() {
+      try {
+        console.log("开始下载图片");
+        // 移除所有输入框的焦点
+        document.activeElement.blur();
+        
+        showLoading();
+        
+        // 同步内容到导出卡片
+        syncContentToExport();
+        
+        // 复制纤维效果
+        copyFibersToExport();
+        
+        // 使用html2canvas将导出卡片转换为canvas
+        const exportCard = document.getElementById('exportCard');
+        
+        // 临时显示导出卡片（但不影响布局）
+        exportCard.style.position = 'absolute';
+        exportCard.style.top = '-9999px';
+        exportCard.style.left = '-9999px';
+        exportCard.style.display = 'block';
+        
+        // 等待一小段时间确保DOM更新完成
+        await new Promise(resolve => setTimeout(resolve, 100));
+        
+        // 移动端设备使用较低的缩放比例以避免内存问题
+        const scale = isMobile ? 1.5 : 2;
+        
+        console.log("开始渲染Canvas");
+        const canvas = await html2canvas(exportCard, {
+          scale: scale, // 根据设备调整导出图片质量
+          useCORS: true,
+          allowTaint: true,
+          backgroundColor: null,
+          logging: false
+        });
+        
+        // 隐藏导出卡片
+        exportCard.style.display = 'none';
+        
+        // 将canvas转换为图片URL
+        const imageUrl = canvas.toDataURL('image/png');
+        
+        // 创建下载链接
+        const downloadLink = document.createElement('a');
+        downloadLink.href = imageUrl;
+        
+        // 使用标题作为文件名（如果有）
+        const title = document.getElementById('poemTitle').textContent.replace(/[《》]/g, '').trim() || '诗歌';
+        downloadLink.download = `${title}.png`;
+        
+        // 触发下载
+        document.body.appendChild(downloadLink);
+        downloadLink.click();
+        document.body.removeChild(downloadLink);
+        
+        hideLoading();
+        showToast('图片已保存');
+        console.log("下载完成");
+      } catch (error) {
+        console.error('下载图片时出错:', error);
+        hideLoading();
+        showToast('保存失败，请重试');
+      }
+    }
+    
+    // 处理编辑区域的换行符，确保它们被正确保存
+    function handleEditorInput(event) {
+      // 当用户按下回车键时
+      if (event.key === 'Enter' && !event.shiftKey) {
+        // 在contenteditable中插入换行符
+        document.execCommand('insertLineBreak');
+        event.preventDefault();
+      }
+    }
+    
+    // 移动端优化：处理触摸事件
+    function setupMobileOptimizations() {
+      if (isMobile) {
+        // 优化按钮文本在移动端的显示
+        if (window.innerWidth < 360) {
+          document.querySelectorAll('.button-text').forEach(text => {
+            if (text.parentElement.id === 'downloadBtn') {
+              text.textContent = '下载';
+            } else if (text.parentElement.id === 'randomColorBtn') {
+              text.textContent = '换色';
+            }
+          });
+        }
+        
+        // 添加触摸反馈
+        document.querySelectorAll('.action-button').forEach(button => {
+          button.addEventListener('touchstart', function() {
+            this.style.transform = 'scale(0.95)';
+          });
+          
+          button.addEventListener('touchend', function() {
+            this.style.transform = 'scale(1)';
+            setTimeout(() => {
+              this.style.transform = '';
+            }, 200);
+          });
+        });
+      }
+    }
+    
+    // 保存内容到本地存储
+    function saveToLocalStorage() {
+      try {
+        localStorage.setItem('poemTitle', document.getElementById('poemTitle').textContent);
+        localStorage.setItem('poemLines', document.getElementById('poemLines').innerHTML);
+        localStorage.setItem('poemAuthor', document.getElementById('poemAuthor').textContent);
+      } catch (e) {
+        console.log('无法保存到本地存储');
+      }
+    }
+    
+    // 从本地存储加载内容
+    function loadFromLocalStorage() {
+      try {
+        const savedTitle = localStorage.getItem('poemTitle');
+        const savedLines = localStorage.getItem('poemLines');
+        const savedAuthor = localStorage.getItem('poemAuthor');
+        const savedColor = localStorage.getItem('poemBackgroundColor');
+        
+        if (savedTitle) document.getElementById('poemTitle').textContent = savedTitle;
+        if (savedLines) document.getElementById('poemLines').innerHTML = savedLines;
+        if (savedAuthor) document.getElementById('poemAuthor').textContent = savedAuthor;
+        
+        if (savedColor) {
+          const paperBackgrounds = document.querySelectorAll('.paper-background');
+          paperBackgrounds.forEach(bg => {
+            bg.style.background = `linear-gradient(to bottom, #f5f2e9 0%, ${savedColor} 40%, #f5f2e9 100%)`;
+          });
+          document.getElementById('colorPreview').style.backgroundColor = savedColor;
+        }
+      } catch (e) {
+        console.log('无法从本地存储加载内容');
+      }
+    }
+    
+    // 初始化
+    document.addEventListener('DOMContentLoaded', function() {
+      console.log('DOM加载完成，初始化应用...');
+      
+      // 添加随机纤维
+      addRandomFibers(isMobile ? 30 : 50); // 移动端减少纤维数量
+      
+      // 设置初始颜色预览
+      document.getElementById('colorPreview').style.backgroundColor = '#c4dccd';
+      
+      // 从本地存储加载内容
+      loadFromLocalStorage();
+      
+      // 同步到导出卡片
+      syncContentToExport();
+      
+      // 设置移动端优化
+      setupMobileOptimizations();
+      
+      // 添加按钮点击事件
+      document.getElementById('randomColorBtn').addEventListener('click', function() {
+        console.log('点击随机颜色按钮');
+        updateBackgroundColor();
+      });
+      
+      document.getElementById('downloadBtn').addEventListener('click', function() {
+          console.log('点击下载按钮');
+          downloadImage();
+        });
+        
+        // 添加编辑区域的输入处理
+        document.getElementById('poemLines').addEventListener('keydown', handleEditorInput);
+        
+        // 添加自动保存功能
+        const editableElements = document.querySelectorAll('.editable');
+        editableElements.forEach(element => {
+          element.addEventListener('input', function() {
+            saveToLocalStorage();
+          });
+        });
+        
+        console.log('应用初始化完成');
+      });
+    </script>
+  </body>
+  </html>

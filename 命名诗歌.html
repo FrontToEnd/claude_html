@@ -118,6 +118,7 @@
       width: 80%;
       max-width: 300px;
       margin: 0 auto;
+      text-align: center; /* 确保容器居中 */
     }
     
     .poem-lines {
@@ -125,6 +126,8 @@
       line-height: 1.8;
       min-height: 160px;
       white-space: pre-wrap;
+      text-align: center; /* 明确设置文本居中 */
+      width: 100%; /* 确保宽度占满容器 */
     }
     
     /* 移动端诗句适配 */
@@ -324,6 +327,13 @@
     /* 用于导出的静态元素 */
     .export-container {
       display: none;
+      box-shadow: none !important; /* 移除导出卡片的阴影 */
+    }
+    
+    /* 确保导出容器的尺寸与原始卡片完全一致 */
+    #exportCard {
+      width: 400px;
+      height: 533px;
     }
     
     .export-title, .export-lines, .export-author {
@@ -336,13 +346,25 @@
       margin-bottom: 40px;
       font-weight: normal;
       text-align: center;
+      width: 80%;
+      max-width: 300px;
+    }
+    
+    /* 导出诗句容器样式 */
+    .export-lines-container {
+      width: 80%;
+      max-width: 300px;
+      margin: 0 auto;
+      text-align: center; /* 确保容器居中 */
     }
     
     .export-lines {
       font-size: 22px;
       line-height: 1.8;
-      text-align: center;
+      text-align: center; /* 明确设置文本居中 */
       white-space: pre-wrap;
+      width: 100%; /* 确保宽度占满容器 */
+      margin: 0 auto; /* 确保水平居中 */
     }
     
     /* 导出作者容器样式 */
@@ -364,28 +386,6 @@
       text-align: left;
     }
     
-    /* 移动端导出元素适配 */
-    @media (max-width: 480px) {
-      .export-title {
-        font-size: 22px;
-        margin-bottom: 20px;
-      }
-      
-      .export-lines {
-        font-size: 18px;
-      }
-      
-      .export-author-container {
-        bottom: 30px;
-        right: 30px;
-      }
-      
-      .export-author-prefix,
-      .export-author {
-        font-size: 14px;
-      }
-    }
-
     /* 错误消息样式 */
     .error-message {
       color: #721c24;
@@ -468,8 +468,8 @@
       <!-- 静态标题 -->
       <div class="export-title" id="exportTitle">《座右铭》</div>
       
-      <!-- 静态诗句 -->
-      <div class="poem-lines-container">
+      <!-- 静态诗句 - 修改为使用与编辑卡片相同的容器结构 -->
+      <div class="export-lines-container">
         <div class="export-lines" id="exportLines">日拱一卒
 功不唐捐
         </div>
@@ -662,6 +662,23 @@
       
       // 同步作者
       document.getElementById('exportAuthor').textContent = document.getElementById('poemAuthor').textContent;
+      
+      // 确保导出卡片中的诗句容器有正确的样式
+      const exportLinesContainer = document.querySelector('.export-lines-container');
+      if (exportLinesContainer) {
+        exportLinesContainer.style.textAlign = 'center';
+        exportLinesContainer.style.width = '80%';
+        exportLinesContainer.style.maxWidth = '300px';
+        exportLinesContainer.style.margin = '0 auto';
+      }
+      
+      // 确保导出卡片中的诗句文本有正确的样式
+      const exportLines = document.getElementById('exportLines');
+      if (exportLines) {
+        exportLines.style.textAlign = 'center';
+        exportLines.style.width = '100%';
+        exportLines.style.margin = '0 auto';
+      }
     }
     
     // 复制纤维效果到导出卡片
@@ -699,12 +716,15 @@
         
         // 同步内容到导出卡片
         syncContentToExport();
-        
+		        
         // 复制纤维效果
         copyFibersToExport();
         
         // 使用dom-to-image将导出卡片转换为图片
         const exportCard = document.getElementById('exportCard');
+        
+        // 确保导出卡片没有阴影
+        exportCard.style.boxShadow = 'none';
         
         // 临时显示导出卡片（但不影响布局）
         exportCard.style.position = 'absolute';
@@ -712,9 +732,24 @@
         exportCard.style.left = '-9999px';
         exportCard.style.display = 'block';
         
+        // 确保导出卡片的尺寸与原始卡片一致
+        const originalCard = document.getElementById('poemCard');
+        exportCard.style.width = originalCard.offsetWidth + 'px';
+        exportCard.style.height = originalCard.offsetHeight + 'px';
+        
+        // 确保导出卡片的内容布局正确
+        const exportContent = exportCard.querySelector('.poem-content');
+        exportContent.style.display = 'flex';
+        exportContent.style.flexDirection = 'column';
+        exportContent.style.alignItems = 'center';
+        exportContent.style.justifyContent = 'center';
+        exportContent.style.height = '100%';
+        exportContent.style.padding = '20px';
+        exportContent.style.boxSizing = 'border-box';
+        
         // 等待一小段时间确保DOM更新完成
         log("等待DOM更新...");
-        await new Promise(resolve => setTimeout(resolve, 300));
+        await new Promise(resolve => setTimeout(resolve, 500));
         
         log("开始生成图片");
         
@@ -727,8 +762,10 @@
             cacheBust: true, // 避免缓存问题
             imagePlaceholder: 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7', // 空白图像占位符
             filter: (node) => {
-              // 排除任何隐藏的元素
+              // 排除任何隐藏的元素和按钮
               return (node.tagName !== 'SCRIPT' && 
+                      node.tagName !== 'BUTTON' &&
+                      !node.classList.contains('buttons-container') &&
                       node.style.display !== 'none' && 
                       node.style.opacity !== '0');
             }

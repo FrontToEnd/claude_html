@@ -4,28 +4,10 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>可编辑诗歌卡片</title>
-  <!-- 直接内联字体以确保可用性 -->
+  <link rel="stylesheet" href="https://chinese-fonts-cdn.deno.dev/packages/hwmct/dist/汇文明朝体/result.css">
+  <!-- 引入html2canvas库 -->
+  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
   <style>
-    /* 内联字体定义 */
-    @font-face {
-      font-family: 'Huiwen-mincho';
-      src: url('https://chinese-fonts-cdn.deno.dev/packages/hwmct/dist/汇文明朝体/result.woff2') format('woff2');
-      font-display: block; /* 修改为block确保字体加载完成才显示 */
-      font-weight: normal;
-      font-style: normal;
-    }
-    
-    /* 预加载字体 */
-    body::before {
-      content: '';
-      font-family: 'Huiwen-mincho', serif;
-      position: absolute;
-      height: 0;
-      width: 0;
-      overflow: hidden;
-      visibility: hidden;
-    }
-    
     body {
       margin: 0;
       padding: 0;
@@ -35,7 +17,7 @@
       min-height: 100vh;
       background-color: #f8f8f8;
       position: relative;
-      font-family: 'Huiwen-mincho', serif;
+      font-family: "Huiwen-mincho", "汇文明朝体", serif;
     }
     
     .poem-container {
@@ -88,7 +70,7 @@
       height: 100%;
       padding: 20px;
       box-sizing: border-box;
-      font-family: 'Huiwen-mincho', serif;
+      font-family: "Huiwen-mincho", "汇文明朝体", serif;
       color: #000;
     }
     
@@ -97,7 +79,7 @@
       background: transparent;
       border: none;
       text-align: center;
-      font-family: 'Huiwen-mincho', serif;
+      font-family: "Huiwen-mincho", "汇文明朝体", serif;
       color: #000;
       resize: none;
       overflow: hidden;
@@ -136,7 +118,6 @@
       width: 80%;
       max-width: 300px;
       margin: 0 auto;
-      text-align: center; /* 确保容器居中 */
     }
     
     .poem-lines {
@@ -144,8 +125,6 @@
       line-height: 1.8;
       min-height: 160px;
       white-space: pre-wrap;
-      text-align: center; /* 明确设置文本居中 */
-      width: 100%; /* 确保宽度占满容器 */
     }
     
     /* 移动端诗句适配 */
@@ -163,7 +142,6 @@
       right: 60px;
       display: flex;
       align-items: center;
-      white-space: nowrap; /* 防止换行 */
     }
     
     /* 移动端作者适配 */
@@ -233,7 +211,7 @@
       border: none;
       border-radius: 8px;
       box-shadow: 5px 5px 10px #d1d1d1, -5px -5px 10px #ffffff;
-      font-family: 'Huiwen-mincho', serif;
+      font-family: "Huiwen-mincho", "汇文明朝体", serif;
       font-size: 16px;
       color: #333;
       cursor: pointer;
@@ -346,17 +324,10 @@
     /* 用于导出的静态元素 */
     .export-container {
       display: none;
-      box-shadow: none !important; /* 移除导出卡片的阴影 */
     }
     
-    /* 确保导出容器的尺寸与原始卡片完全一致 */
-    #exportCard {
-      width: 400px;
-      height: 533px;
-    }
-    
-    .export-title, .export-lines, .export-author, .export-author-prefix {
-      font-family: 'Huiwen-mincho', serif !important;
+    .export-title, .export-lines, .export-author {
+      font-family: "Huiwen-mincho", "汇文明朝体", serif;
       color: #000;
     }
     
@@ -365,25 +336,13 @@
       margin-bottom: 40px;
       font-weight: normal;
       text-align: center;
-      width: 80%;
-      max-width: 300px;
-    }
-    
-    /* 导出诗句容器样式 */
-    .export-lines-container {
-      width: 80%;
-      max-width: 300px;
-      margin: 0 auto;
-      text-align: center; /* 确保容器居中 */
     }
     
     .export-lines {
       font-size: 22px;
       line-height: 1.8;
-      text-align: center; /* 明确设置文本居中 */
+      text-align: center;
       white-space: pre-wrap;
-      width: 100%; /* 确保宽度占满容器 */
-      margin: 0 auto; /* 确保水平居中 */
     }
     
     /* 导出作者容器样式 */
@@ -393,21 +352,40 @@
       right: 60px;
       display: flex;
       align-items: center;
-      white-space: nowrap; /* 防止换行 */
     }
     
     .export-author-prefix {
       font-size: 16px;
       margin-right: 5px;
-      font-family: 'Huiwen-mincho', serif !important;
     }
     
     .export-author {
       font-size: 16px;
       text-align: left;
-      font-family: 'Huiwen-mincho', serif !important;
     }
     
+    /* 移动端导出元素适配 */
+    @media (max-width: 480px) {
+      .export-title {
+        font-size: 22px;
+        margin-bottom: 20px;
+      }
+      
+      .export-lines {
+        font-size: 18px;
+      }
+      
+      .export-author-container {
+        bottom: 30px;
+        right: 30px;
+      }
+      
+      .export-author-prefix,
+      .export-author {
+        font-size: 14px;
+      }
+    }
+
     /* 错误消息样式 */
     .error-message {
       color: #721c24;
@@ -426,41 +404,7 @@
       box-shadow: 0 2px 8px rgba(0,0,0,0.1);
       max-width: 90%;
     }
-    
-    /* 添加调试信息区域 */
-    .debug-info {
-      position: fixed;
-      bottom: 20px;
-      left: 20px;
-      background-color: rgba(0, 0, 0, 0.7);
-      color: white;
-      padding: 10px;
-      border-radius: 5px;
-      font-size: 12px;
-      max-width: 300px;
-      max-height: 150px;
-      overflow-y: auto;
-      z-index: 1000;
-      display: none;
-    }
-    
-    /* 字体选择器 */
-    .font-selector {
-      position: fixed;
-      top: 20px;
-      right: 20px;
-      z-index: 100;
-    }
-    
-    /* 备用字体样式 */
-    .fallback-font {
-      font-family: SimSun, "宋体", serif;
-    }
   </style>
-  <!-- 使用更稳定的dom-to-image-more库 -->
-  <script src="https://cdn.jsdelivr.net/npm/dom-to-image-more@2.9.5/dist/dom-to-image-more.min.js"></script>
-  <!-- 添加html2canvas作为备选方案 -->
-  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
 </head>
 <body>
   <!-- 编辑用的卡片 -->
@@ -507,8 +451,8 @@
       <!-- 静态标题 -->
       <div class="export-title" id="exportTitle">《座右铭》</div>
       
-      <!-- 静态诗句 - 修改为使用与编辑卡片相同的容器结构 -->
-      <div class="export-lines-container">
+      <!-- 静态诗句 -->
+      <div class="poem-lines-container">
         <div class="export-lines" id="exportLines">日拱一卒
 功不唐捐
         </div>
@@ -549,49 +493,9 @@
   <!-- 错误消息 -->
   <div class="error-message" id="errorMessage"></div>
   
-  <!-- 调试信息区域 -->
-  <div class="debug-info" id="debugInfo"></div>
-  
   <script>
     // 检测是否为移动设备
     const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-    
-    // 调试日志函数
-    function log(message) {
-      console.log(message);
-      const debugInfo = document.getElementById('debugInfo');
-      if (debugInfo) {
-        const logEntry = document.createElement('div');
-        logEntry.textContent = `${new Date().toLocaleTimeString()}: ${message}`;
-        debugInfo.appendChild(logEntry);
-        debugInfo.scrollTop = debugInfo.scrollHeight;
-      }
-    }
-    
-    // 显示调试信息
-    function showDebugInfo() {
-      document.getElementById('debugInfo').style.display = 'block';
-    }
-    
-    // 隐藏调试信息
-    function hideDebugInfo() {
-      document.getElementById('debugInfo').style.display = 'none';
-    }
-    
-    // 检测浏览器功能支持
-    function checkBrowserSupport() {
-      const support = {
-        canvas: !!document.createElement('canvas').getContext,
-        svg: !!document.createElementNS && !!document.createElementNS('http://www.w3.org/2000/svg', 'svg').createSVGRect,
-        blob: !!window.Blob,
-        download: 'download' in document.createElement('a'),
-        cssText: !!((document.body || document.documentElement).style.cssText !== undefined)
-      };
-      
-      log(`浏览器支持检查: Canvas: ${support.canvas}, SVG: ${support.svg}, Blob: ${support.blob}, Download: ${support.download}, cssText: ${support.cssText}`);
-      
-      return support;
-    }
     
     // 添加更多随机纤维效果
     function addRandomFibers(count) {
@@ -632,7 +536,7 @@
     
     // 更新背景颜色
     function updateBackgroundColor() {
-      log("更新背景颜色");
+      console.log("更新背景颜色");
       const newColor = getRandomSoftColor();
       const paperBackgrounds = document.querySelectorAll('.paper-background');
       const colorPreview = document.getElementById('colorPreview');
@@ -649,7 +553,7 @@
       try {
         localStorage.setItem('poemBackgroundColor', newColor);
       } catch (e) {
-        log('无法保存颜色到本地存储');
+        console.log('无法保存颜色到本地存储');
       }
     }
     
@@ -685,58 +589,6 @@
       }, 5000);
     }
     
-    // 检查字体是否加载完成
-    function checkFontLoaded(fontFamily, callback, timeout = 5000) {
-      const startTime = Date.now();
-      
-      // 创建两个span元素进行比较
-      const parent = document.createElement('span');
-      parent.style.position = 'absolute';
-      parent.style.top = '-999px';
-      parent.style.left = '-999px';
-      parent.style.fontSize = '72px';
-      parent.style.visibility = 'hidden';
-      
-      // 创建使用目标字体的span
-      const targetFont = document.createElement('span');
-      targetFont.style.fontFamily = fontFamily;
-      targetFont.textContent = '诗词歌赋';
-      
-      // 创建使用备用字体的span
-      const fallbackFont = document.createElement('span');
-      fallbackFont.style.fontFamily = 'sans-serif';
-      fallbackFont.textContent = '诗词歌赋';
-      
-      // 添加到DOM
-      parent.appendChild(targetFont);
-      parent.appendChild(fallbackFont);
-      document.body.appendChild(parent);
-      
-      // 检查函数
-      function checkWidth() {
-        // 如果两个span的宽度不同，说明目标字体已加载
-        if (targetFont.offsetWidth !== fallbackFont.offsetWidth) {
-          document.body.removeChild(parent);
-          log(`字体 ${fontFamily} 已加载完成`);
-          callback(true);
-          return;
-        }
-        
-        // 如果超时，则返回false
-        if (Date.now() - startTime > timeout) {
-          document.body.removeChild(parent);
-          log(`字体 ${fontFamily} 加载超时`);
-          callback(false);
-          return;
-        }
-        
-        // 继续检查
-        setTimeout(checkWidth, 50);
-      }
-      
-      checkWidth();
-    }
-    
     // 同步编辑内容到导出卡片，确保换行符被保留
     function syncContentToExport() {
       // 同步标题
@@ -752,40 +604,7 @@
       document.getElementById('exportLines').textContent = poemLinesContent;
       
       // 同步作者
-            // 同步作者
       document.getElementById('exportAuthor').textContent = document.getElementById('poemAuthor').textContent;
-      
-      // 确保导出卡片中的诗句容器有正确的样式
-      const exportLinesContainer = document.querySelector('.export-lines-container');
-      if (exportLinesContainer) {
-        exportLinesContainer.style.textAlign = 'center';
-        exportLinesContainer.style.width = '80%';
-        exportLinesContainer.style.maxWidth = '300px';
-        exportLinesContainer.style.margin = '0 auto';
-      }
-      
-      // 确保导出卡片中的诗句文本有正确的样式
-      const exportLines = document.getElementById('exportLines');
-      if (exportLines) {
-        exportLines.style.textAlign = 'center';
-        exportLines.style.width = '100%';
-        exportLines.style.margin = '0 auto';
-        exportLines.style.fontFamily = "'Huiwen-mincho', serif";
-      }
-      
-      // 确保导出卡片中的作者容器不会换行
-      const exportAuthorContainer = document.querySelector('.export-author-container');
-      if (exportAuthorContainer) {
-        exportAuthorContainer.style.whiteSpace = 'nowrap';
-        exportAuthorContainer.style.display = 'flex';
-        exportAuthorContainer.style.alignItems = 'center';
-      }
-      
-      // 确保所有导出元素都应用了正确的字体
-      const exportElements = document.querySelectorAll('.export-title, .export-lines, .export-author, .export-author-prefix');
-      exportElements.forEach(el => {
-        el.style.fontFamily = "'Huiwen-mincho', serif";
-      });
     }
     
     // 复制纤维效果到导出卡片
@@ -803,186 +622,10 @@
       });
     }
     
-    // 将字体转换为Base64内联
-    async function inlineFontToBase64() {
-      try {
-        log("尝试内联字体...");
-        const response = await fetch('https://chinese-fonts-cdn.deno.dev/packages/hwmct/dist/汇文明朝体/result.woff2');
-        if (!response.ok) throw new Error('无法获取字体文件');
-        
-        const fontData = await response.arrayBuffer();
-        const base64Font = btoa(String.fromCharCode(...new Uint8Array(fontData)));
-        const fontFace = `@font-face {
-          font-family: 'Huiwen-mincho-inline';
-          src: url(data:font/woff2;base64,${base64Font}) format('woff2');
-          font-weight: normal;
-          font-style: normal;
-        }`;
-        
-        // 添加内联字体到文档
-        const style = document.createElement('style');
-        style.textContent = fontFace;
-        document.head.appendChild(style);
-        
-        log("字体内联完成");
-        return true;
-      } catch (error) {
-        log(`内联字体失败: ${error.message}`);
-        return false;
-      }
-    }
-    
-    // 使用html2canvas渲染图片
-    async function renderWithHtml2Canvas() {
-      log("使用html2canvas渲染...");
-      const exportCard = document.getElementById('exportCard');
-      
-      try {
-        // 确保html2canvas可用
-        if (typeof html2canvas !== 'function') {
-          throw new Error('html2canvas未加载');
-        }
-        
-        // 渲染设置
-        const canvas = await html2canvas(exportCard, {
-          scale: 2, // 提高分辨率
-          useCORS: true,
-          allowTaint: true,
-          backgroundColor: null,
-          logging: false,
-          onclone: (clonedDoc) => {
-            // 在克隆的文档中强制应用字体
-            const elements = clonedDoc.querySelectorAll('.export-title, .export-lines, .export-author, .export-author-prefix');
-            elements.forEach(el => {
-              el.style.fontFamily = "'Huiwen-mincho', serif";
-              el.style.fontWeight = "normal";
-            });
-          }
-        });
-        
-        // 转换为图片URL
-        const imageUrl = canvas.toDataURL('image/png');
-        
-        // 创建下载链接
-        const downloadLink = document.createElement('a');
-        downloadLink.href = imageUrl;
-        
-        // 使用标题作为文件名
-        const title = document.getElementById('poemTitle').textContent.replace(/[《》]/g, '').trim() || '诗歌';
-        downloadLink.download = `${title}.png`;
-        
-        // 触发下载
-        document.body.appendChild(downloadLink);
-        downloadLink.click();
-        document.body.removeChild(downloadLink);
-        
-        return true;
-      } catch (error) {
-        log(`html2canvas渲染失败: ${error.message}`);
-        return false;
-      }
-    }
-    
-    // 使用Canvas API直接渲染
-    function renderWithCanvasAPI() {
-      log("使用Canvas API直接渲染...");
-      try {
-        // 创建canvas
-        const canvas = document.createElement('canvas');
-        const ctx = canvas.getContext('2d');
-        
-        // 获取导出卡片尺寸
-        const exportCard = document.getElementById('exportCard');
-        canvas.width = exportCard.offsetWidth * 2; // 提高分辨率
-        canvas.height = exportCard.offsetHeight * 2;
-        
-        // 设置缩放以提高分辨率
-        ctx.scale(2, 2);
-        
-        // 获取背景颜色
-        const bgStyle = window.getComputedStyle(exportCard.querySelector('.paper-background')).background;
-        
-        // 绘制背景
-        const gradient = ctx.createLinearGradient(0, 0, 0, exportCard.offsetHeight);
-        gradient.addColorStop(0, '#f5f2e9');
-        gradient.addColorStop(0.4, document.getElementById('colorPreview').style.backgroundColor || '#c4dccd');
-        gradient.addColorStop(1, '#f5f2e9');
-        
-        ctx.fillStyle = gradient;
-        ctx.fillRect(0, 0, exportCard.offsetWidth, exportCard.offsetHeight);
-        
-        // 添加纸张纹理效果
-        ctx.globalAlpha = 0.1;
-        for (let i = 0; i < 5000; i++) {
-          const x = Math.random() * exportCard.offsetWidth;
-          const y = Math.random() * exportCard.offsetHeight;
-          const size = Math.random() * 1.5 + 0.5;
-          ctx.fillStyle = Math.random() > 0.5 ? '#000' : '#fff';
-          ctx.fillRect(x, y, size, size);
-        }
-        ctx.globalAlpha = 1;
-        
-        // 设置文本样式
-        ctx.textAlign = 'center';
-        ctx.fillStyle = '#000';
-        
-        // 尝试应用字体
-        ctx.font = "28px 'Huiwen-mincho', serif";
-        
-        // 绘制标题
-        const title = document.getElementById('exportTitle').textContent;
-        ctx.fillText(title, exportCard.offsetWidth / 2, 80);
-        
-        // 绘制诗句
-        const lines = document.getElementById('exportLines').textContent.split('\n');
-        ctx.font = "22px 'Huiwen-mincho', serif";
-        let y = 160;
-        lines.forEach(line => {
-          if (line.trim()) {
-            ctx.fillText(line.trim(), exportCard.offsetWidth / 2, y);
-            y += 40;
-          }
-        });
-        
-        // 绘制作者
-        ctx.textAlign = 'right';
-        ctx.font = "16px 'Huiwen-mincho', serif";
-        const author = document.getElementById('exportAuthor').textContent;
-        ctx.fillText(`—— by ${author}`, exportCard.offsetWidth - 60, exportCard.offsetHeight - 60);
-        
-        // 导出图片
-        const imageUrl = canvas.toDataURL('image/png');
-        
-        // 创建下载链接
-        const downloadLink = document.createElement('a');
-        downloadLink.href = imageUrl;
-        downloadLink.download = `${title.replace(/[《》]/g, '').trim() || '诗歌'}.png`;
-        
-        // 触发下载
-        document.body.appendChild(downloadLink);
-        downloadLink.click();
-        document.body.removeChild(downloadLink);
-        
-        return true;
-      } catch (error) {
-        log(`Canvas API渲染失败: ${error.message}`);
-        return false;
-      }
-    }
-    
-    // 下载图片 - 优化版本，增加错误处理和调试信息
+    // 下载图片 - 优化版本，处理移动端问题
     async function downloadImage() {
       try {
-        log("开始下载图片");
-        // 显示调试信息（仅在开发模式下）
-        // showDebugInfo();
-        
-        // 检查浏览器支持
-        const browserSupport = checkBrowserSupport();
-        if (!browserSupport.canvas) {
-          throw new Error("浏览器不支持Canvas功能");
-        }
-        
+        console.log("开始下载图片");
         // 移除所有输入框的焦点
         document.activeElement.blur();
         
@@ -994,9 +637,8 @@
         // 复制纤维效果
         copyFibersToExport();
         
-        // 确保导出卡片没有阴影
+        // 使用html2canvas将导出卡片转换为canvas
         const exportCard = document.getElementById('exportCard');
-        exportCard.style.boxShadow = 'none';
         
         // 临时显示导出卡片（但不影响布局）
         exportCard.style.position = 'absolute';
@@ -1004,267 +646,301 @@
         exportCard.style.left = '-9999px';
         exportCard.style.display = 'block';
         
-        // 确保导出卡片的尺寸与原始卡片一致
-        const originalCard = document.getElementById('poemCard');
-        exportCard.style.width = originalCard.offsetWidth + 'px';
-        exportCard.style.height = originalCard.offsetHeight + 'px';
-        
         // 等待一小段时间确保DOM更新完成
-        log("等待DOM更新...");
-        await new Promise(resolve => setTimeout(resolve, 300));
+        await new Promise(resolve => setTimeout(resolve, 100));
         
-        // 检查字体是否加载完成
-        log("检查字体加载状态...");
-        checkFontLoaded('Huiwen-mincho', async (fontLoaded) => {
-          if (!fontLoaded) {
-            log("字体未加载，尝试使用备用方案");
-            
-            // 尝试内联字体
-            const inlined = await inlineFontToBase64();
-            if (inlined) {
-              log("字体已内联，等待应用...");
-              await new Promise(resolve => setTimeout(resolve, 500));
-            }
-          }
-          
-          // 尝试使用html2canvas渲染
-          const html2canvasSuccess = await renderWithHtml2Canvas();
-          
-          if (!html2canvasSuccess) {
-            // 如果html2canvas失败，尝试使用Canvas API
-            const canvasSuccess = renderWithCanvasAPI();
-            
-            if (!canvasSuccess) {
-              showError('无法生成图片，请尝试使用截屏功能保存');
-            }
-          }
+        // 移动端设备使用较低的缩放比例以避免内存问题
+        const scale = isMobile ? 1.0 : 2; // 降低移动端的缩放比例
+        
+        console.log("开始渲染Canvas");
+        
+        try {
+          // 使用try-catch专门捕获html2canvas可能的错误
+          const canvas = await html2canvas(exportCard, {
+            scale: scale,
+            useCORS: true,
+            allowTaint: true,
+            backgroundColor: null,
+            logging: false,
+            // 移动端优化：减少渲染质量
+            imageTimeout: 0, // 不等待图片加载
+            removeContainer: true // 渲染后移除临时容器
+          });
           
           // 隐藏导出卡片
           exportCard.style.display = 'none';
+          
+          // 将canvas转换为图片URL
+          let imageUrl;
+          try {
+            imageUrl = canvas.toDataURL('image/png');
+          } catch (e) {
+            console.warn('PNG导出失败，尝试JPEG:', e);
+            imageUrl = canvas.toDataURL('image/jpeg', 0.8);
+          }
+          
+          // 创建下载链接
+          const downloadLink = document.createElement('a');
+          downloadLink.href = imageUrl;
+          
+          // 使用标题作为文件名（如果有）
+          const title = document.getElementById('poemTitle').textContent.replace(/[《》]/g, '').trim() || '诗歌';
+          downloadLink.download = `${title}.png`;
+          
+          // 触发下载
+          document.body.appendChild(downloadLink);
+          downloadLink.click();
+          document.body.removeChild(downloadLink);
+          
           hideLoading();
-          hideDebugInfo();
-        });
-      } catch (error) {
-        log(`下载图片时出错: ${error.message}`);
-        hideLoading();
-        hideDebugInfo();
-        showError(`保存失败: ${error.message}。请使用截屏功能或检查浏览器设置。`);
-      }
-    }
-    
-    // 处理编辑器的输入，允许按Enter键添加换行
-    function handleEditorInput(event) {
-      // 如果按下的是Enter键
-      if (event.key === 'Enter') {
-        // 不阻止默认行为，允许添加换行符
-        // 但我们需要保存到本地存储
-        setTimeout(() => {
-          saveToLocalStorage();
-        }, 10);
-      }
-    }
-    
-    // 设置移动端优化
-    function setupMobileOptimizations() {
-      if (isMobile) {
-        log("应用移动端优化");
-        
-        // 缩小按钮文本
-        const buttons = document.querySelectorAll('.action-button');
-        buttons.forEach(button => {
-          const text = button.querySelector('.button-text');
-          if (text) {
-            if (text.textContent === '随机颜色') {
-              text.textContent = '换色';
-            }
-          }
-        });
-        
-        // 添加触摸反馈
-        document.querySelectorAll('.action-button').forEach(button => {
-          button.addEventListener('touchstart', function() {
-            this.style.transform = 'scale(0.95)';
-          });
+          showToast('图片已保存');
+          console.log("下载完成");
+        } catch (canvasError) {
+          console.error('Canvas渲染错误:', canvasError);
           
-          button.addEventListener('touchend', function() {
-            this.style.transform = 'scale(1)';
-            setTimeout(() => {
-              this.style.transform = '';
-            }, 200);
-          });
-        });
-
-        // 处理输入框聚焦时的页面缩放问题
-        document.querySelectorAll('.editable').forEach(element => {
-          // 设置字体大小为16px以上，避免iOS自动缩放
-          if (parseFloat(getComputedStyle(element).fontSize) < 16) {
-            element.style.fontSize = '16px';
-          }
-        });
-      }
-    }
-    
-    // 保存内容到本地存储
-    function saveToLocalStorage() {
-      try {
-        localStorage.setItem('poemTitle', document.getElementById('poemTitle').textContent);
-        localStorage.setItem('poemLines', document.getElementById('poemLines').innerHTML);
-        localStorage.setItem('poemAuthor', document.getElementById('poemAuthor').textContent);
-      } catch (e) {
-        log('无法保存到本地存储');
-      }
-    }
-    
-    // 从本地存储加载内容
-    function loadFromLocalStorage() {
-      try {
-        const savedTitle = localStorage.getItem('poemTitle');
-        const savedLines = localStorage.getItem('poemLines');
-        const savedAuthor = localStorage.getItem('poemAuthor');
-        const savedColor = localStorage.getItem('poemBackgroundColor');
-        
-        if (savedTitle) document.getElementById('poemTitle').textContent = savedTitle;
-        if (savedLines) document.getElementById('poemLines').innerHTML = savedLines;
-        if (savedAuthor) document.getElementById('poemAuthor').textContent = savedAuthor;
-        
-        if (savedColor) {
-          const paperBackgrounds = document.querySelectorAll('.paper-background');
-          paperBackgrounds.forEach(bg => {
-            bg.style.background = `linear-gradient(to bottom, #f5f2e9 0%, ${savedColor} 40%, #f5f2e9 100%)`;
-          });
-          document.getElementById('colorPreview').style.backgroundColor = savedColor;
-        }
-      } catch (e) {
-        log('无法从本地存储加载内容');
-      }
-    }
-
-    // 检测设备内存和性能
-    function checkDeviceCapabilities() {
-      // 检测设备性能
-      let performanceLevel = 'high';
-      
-      // 检查是否为低端设备
-      if (isMobile) {
-        // 检查设备内存 (如果浏览器支持)
-        if (navigator.deviceMemory) {
-          if (navigator.deviceMemory < 4) {
-            performanceLevel = 'low';
-          }
-        }
-        
-        // 检查处理器核心数 (如果浏览器支持)
-        if (navigator.hardwareConcurrency) {
-          if (navigator.hardwareConcurrency <= 4) {
-            performanceLevel = 'low';
-          }
-        }
-        
-        // 根据用户代理字符串判断是否为低端设备
-        const userAgent = navigator.userAgent.toLowerCase();
-        if (userAgent.includes('android 4') || userAgent.includes('android 5')) {
-          performanceLevel = 'low';
-        }
-      }
-      
-      return performanceLevel;
-    }
-    
-    // 预加载字体
-    function preloadFonts() {
-      // 创建一个使用目标字体的隐藏元素
-      const preloadElement = document.createElement('div');
-      preloadElement.style.fontFamily = "'Huiwen-mincho', serif";
-      preloadElement.style.position = 'absolute';
-      preloadElement.style.visibility = 'hidden';
-      preloadElement.style.height = '0';
-      preloadElement.textContent = '字体预加载 诗词歌赋';
-      document.body.appendChild(preloadElement);
-      
-      // 尝试使用FontFace API加载字体
-      if (window.FontFace) {
-        try {
-          const font = new FontFace('Huiwen-mincho', 
-            "url('https://chinese-fonts-cdn.deno.dev/packages/hwmct/dist/汇文明朝体/result.woff2') format('woff2')",
-            { 
-              display: 'swap',
-              weight: 'normal',
-              style: 'normal'
-            }
-          );
-          
-          font.load().then(() => {
-            document.fonts.add(font);
-            log('字体已加载');
-            
-            // 强制应用字体
-            document.body.style.fontFamily = "'Huiwen-mincho', serif";
-            
-            // 更新所有需要应用字体的元素
-            document.querySelectorAll('.poem-title, .poem-lines, .poem-author, .poem-author-prefix, .export-title, .export-lines, .export-author, .export-author-prefix')
-              .forEach(el => {
-                el.style.fontFamily = "'Huiwen-mincho', serif";
+          // 移动端特殊处理：尝试使用备用方法
+          if (isMobile) {
+            // 使用更简单的方法尝试导出
+            try {
+              const simpleCanvas = document.createElement('canvas');
+              const ctx = simpleCanvas.getContext('2d');
+              
+              // 设置较小的尺寸以避免内存问题
+              const width = Math.min(exportCard.offsetWidth, 800);
+              const height = Math.min(exportCard.offsetHeight, 1000);
+              
+              simpleCanvas.width = width;
+              simpleCanvas.height = height;
+              
+              // 绘制背景色
+              ctx.fillStyle = '#f5f2e9';
+              ctx.fillRect(0, 0, width, height);
+              
+              // 绘制文本
+              ctx.fillStyle = '#000';
+              ctx.font = '22px Huiwen-mincho';
+              ctx.textAlign = 'center';
+              
+              // 绘制标题
+              const title = document.getElementById('exportTitle').textContent;
+              ctx.fillText(title, width/2, 80);
+              
+              // 绘制诗句
+              const lines = document.getElementById('exportLines').textContent.split('\n');
+              let y = 150;
+              lines.forEach(line => {
+                ctx.fillText(line.trim(), width/2, y);
+                y += 40;
               });
-          }).catch(err => {
-            log('字体加载失败: ' + err);
-          });
-        } catch (e) {
-          log('FontFace API 不可用: ' + e);
+              
+              // 绘制作者
+              const author = document.getElementById('exportAuthor').textContent;
+              ctx.textAlign = 'right';
+              ctx.font = '16px Huiwen-mincho';
+              ctx.fillText(`—— by ${author}`, width - 60, height - 60);
+              
+              // 导出简化版图片
+              const simpleImageUrl = simpleCanvas.toDataURL('image/png');
+              
+              const downloadLink = document.createElement('a');
+              downloadLink.href = simpleImageUrl;
+              downloadLink.download = `${title.replace(/[《》]/g, '').trim() || '诗歌'}_简化版.png`;
+              document.body.appendChild(downloadLink);
+              downloadLink.click();
+                document.body.removeChild(downloadLink);
+                
+                hideLoading();
+                showToast('已保存简化版图片');
+                console.log("简化版下载完成");
+              } catch (simpleError) {
+                console.error('简化版导出也失败:', simpleError);
+                hideLoading();
+                showError('无法生成图片，请尝试使用较新的浏览器或截屏保存');
+              }
+            } else {
+              hideLoading();
+              showError('图片生成失败，请重试');
+            }
+          }
+        } catch (error) {
+          console.error('下载图片时出错:', error);
+          hideLoading();
+          showError('保存失败，请重试或使用截屏功能');
         }
       }
-    }
-    
-    // 初始化
-    document.addEventListener('DOMContentLoaded', function() {
-      console.log('DOM加载完成，初始化应用...');
       
-      // 预加载字体
-      preloadFonts();
+      // 处理编辑区域的换行符，确保它们被正确保存
+      function handleEditorInput(event) {
+        // 当用户按下回车键时
+        if (event.key === 'Enter' && !event.shiftKey) {
+          // 在contenteditable中插入换行符
+          document.execCommand('insertLineBreak');
+          event.preventDefault();
+        }
+      }
       
-      // 检测设备性能
-      const performanceLevel = checkDeviceCapabilities();
-      console.log(`设备性能级别: ${performanceLevel}`);
+      // 移动端优化：处理触摸事件
+      function setupMobileOptimizations() {
+        if (isMobile) {
+          // 优化按钮文本在移动端的显示
+          if (window.innerWidth < 360) {
+            document.querySelectorAll('.button-text').forEach(text => {
+              if (text.parentElement.id === 'downloadBtn') {
+                text.textContent = '下载';
+              } else if (text.parentElement.id === 'randomColorBtn') {
+                text.textContent = '换色';
+              }
+            });
+          }
+          
+          // 添加触摸反馈
+          document.querySelectorAll('.action-button').forEach(button => {
+            button.addEventListener('touchstart', function() {
+              this.style.transform = 'scale(0.95)';
+            });
+            
+            button.addEventListener('touchend', function() {
+              this.style.transform = 'scale(1)';
+              setTimeout(() => {
+                this.style.transform = '';
+              }, 200);
+            });
+          });
+
+          // 处理输入框聚焦时的页面缩放问题
+          document.querySelectorAll('.editable').forEach(element => {
+            // 设置字体大小为16px以上，避免iOS自动缩放
+            if (parseFloat(getComputedStyle(element).fontSize) < 16) {
+              element.style.fontSize = '16px';
+            }
+            
+            // 聚焦时临时调整viewport，防止缩放
+            element.addEventListener('focus', function() {
+              // 已经在meta标签中设置了user-scalable=no
+            });
+            
+            // 失焦时恢复viewport
+            element.addEventListener('blur', function() {
+              // 已经在meta标签中设置了user-scalable=no
+            });
+          });
+        }
+      }
       
-      // 添加随机纤维
-      const fiberCount = performanceLevel === 'low' ? 20 : (isMobile ? 30 : 50);
-      addRandomFibers(fiberCount);
-      
-      // 设置初始颜色预览
-      document.getElementById('colorPreview').style.backgroundColor = '#c4dccd';
+      // 保存内容到本地存储
+      function saveToLocalStorage() {
+        try {
+          localStorage.setItem('poemTitle', document.getElementById('poemTitle').textContent);
+          localStorage.setItem('poemLines', document.getElementById('poemLines').innerHTML);
+          localStorage.setItem('poemAuthor', document.getElementById('poemAuthor').textContent);
+        } catch (e) {
+          console.log('无法保存到本地存储');
+        }
+      }
       
       // 从本地存储加载内容
-      loadFromLocalStorage();
+      function loadFromLocalStorage() {
+        try {
+          const savedTitle = localStorage.getItem('poemTitle');
+          const savedLines = localStorage.getItem('poemLines');
+          const savedAuthor = localStorage.getItem('poemAuthor');
+          const savedColor = localStorage.getItem('poemBackgroundColor');
+          
+          if (savedTitle) document.getElementById('poemTitle').textContent = savedTitle;
+          if (savedLines) document.getElementById('poemLines').innerHTML = savedLines;
+          if (savedAuthor) document.getElementById('poemAuthor').textContent = savedAuthor;
+          
+          if (savedColor) {
+            const paperBackgrounds = document.querySelectorAll('.paper-background');
+            paperBackgrounds.forEach(bg => {
+              bg.style.background = `linear-gradient(to bottom, #f5f2e9 0%, ${savedColor} 40%, #f5f2e9 100%)`;
+            });
+            document.getElementById('colorPreview').style.backgroundColor = savedColor;
+          }
+        } catch (e) {
+          console.log('无法从本地存储加载内容');
+        }
+      }
+
+      // 检测设备内存和性能
+      function checkDeviceCapabilities() {
+        // 检测设备性能
+        let performanceLevel = 'high';
+        
+        // 检查是否为低端设备
+        if (isMobile) {
+          // 检查设备内存 (如果浏览器支持)
+          if (navigator.deviceMemory) {
+            if (navigator.deviceMemory < 4) {
+              performanceLevel = 'low';
+            }
+          }
+          
+          // 检查处理器核心数 (如果浏览器支持)
+          if (navigator.hardwareConcurrency) {
+            if (navigator.hardwareConcurrency <= 4) {
+              performanceLevel = 'low';
+            }
+          }
+          
+          // 根据用户代理字符串判断是否为低端设备
+          const userAgent = navigator.userAgent.toLowerCase();
+          if (userAgent.includes('android 4') || userAgent.includes('android 5')) {
+            performanceLevel = 'low';
+          }
+        }
+        
+        return performanceLevel;
+      }
       
-      // 同步到导出卡片
-      syncContentToExport();
-      
-      // 设置移动端优化
-      setupMobileOptimizations();
-      
-      // 添加按钮点击事件
-      document.getElementById('randomColorBtn').addEventListener('click', function() {
-        console.log('点击随机颜色按钮');
-        updateBackgroundColor();
-      });
-      
-      document.getElementById('downloadBtn').addEventListener('click', function() {
-        console.log('点击下载按钮');
-        downloadImage();
-      });
-      
-      // 添加编辑区域的输入处理
-      document.getElementById('poemLines').addEventListener('keydown', handleEditorInput);
-      
-      // 添加自动保存功能
-      const editableElements = document.querySelectorAll('.editable');
-      editableElements.forEach(element => {
-        element.addEventListener('input', function() {
-          saveToLocalStorage();
+      // 初始化
+      document.addEventListener('DOMContentLoaded', function() {
+        console.log('DOM加载完成，初始化应用...');
+        
+        // 检测设备性能
+        const performanceLevel = checkDeviceCapabilities();
+        console.log(`设备性能级别: ${performanceLevel}`);
+        
+        // 添加随机纤维
+        const fiberCount = performanceLevel === 'low' ? 20 : (isMobile ? 30 : 50);
+        addRandomFibers(fiberCount);
+        
+        // 设置初始颜色预览
+        document.getElementById('colorPreview').style.backgroundColor = '#c4dccd';
+        
+        // 从本地存储加载内容
+        loadFromLocalStorage();
+        
+        // 同步到导出卡片
+        syncContentToExport();
+        
+        // 设置移动端优化
+        setupMobileOptimizations();
+        
+        // 添加按钮点击事件
+        document.getElementById('randomColorBtn').addEventListener('click', function() {
+          console.log('点击随机颜色按钮');
+          updateBackgroundColor();
         });
+        
+        document.getElementById('downloadBtn').addEventListener('click', function() {
+          console.log('点击下载按钮');
+          downloadImage();
+        });
+        
+        // 添加编辑区域的输入处理
+        document.getElementById('poemLines').addEventListener('keydown', handleEditorInput);
+        
+        // 添加自动保存功能
+        const editableElements = document.querySelectorAll('.editable');
+        editableElements.forEach(element => {
+          element.addEventListener('input', function() {
+            saveToLocalStorage();
+          });
+        });
+        
+        console.log('应用初始化完成');
       });
-      
-      console.log('应用初始化完成');
-    });
-  </script>
-</body>
-</html>
+    </script>
+  </body>
+  </html>

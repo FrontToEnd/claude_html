@@ -145,6 +145,7 @@
       right: 60px;
       display: flex;
       align-items: center;
+      white-space: nowrap; /* 防止换行 */
     }
     
     /* 移动端作者适配 */
@@ -337,7 +338,7 @@
     }
     
     .export-title, .export-lines, .export-author {
-      font-family: "Huiwen-mincho", "汇文明朝体", serif;
+      font-family: "Huiwen-mincho", "汇文明朝体", serif !important;
       color: #000;
     }
     
@@ -374,16 +375,19 @@
       right: 60px;
       display: flex;
       align-items: center;
+      white-space: nowrap; /* 防止换行 */
     }
     
     .export-author-prefix {
       font-size: 16px;
       margin-right: 5px;
+      font-family: "Huiwen-mincho", "汇文明朝体", serif !important;
     }
     
     .export-author {
       font-size: 16px;
       text-align: left;
+      font-family: "Huiwen-mincho", "汇文明朝体", serif !important;
     }
     
     /* 错误消息样式 */
@@ -420,6 +424,13 @@
       overflow-y: auto;
       z-index: 1000;
       display: none;
+    }
+    
+    /* 确保字体预加载 */
+    @font-face {
+      font-family: "Huiwen-mincho";
+      src: url("https://chinese-fonts-cdn.deno.dev/packages/hwmct/dist/汇文明朝体/result.woff2") format("woff2");
+      font-display: swap;
     }
   </style>
 </head>
@@ -512,6 +523,9 @@
   
   <!-- 调试信息区域 -->
   <div class="debug-info" id="debugInfo"></div>
+  
+  <!-- 字体预加载元素 -->
+  <div style="font-family: 'Huiwen-mincho', '汇文明朝体', serif; position: absolute; visibility: hidden; height: 0;">字体预加载</div>
   
   <script>
     // 检测是否为移动设备
@@ -646,6 +660,37 @@
       }, 5000);
     }
     
+    // 预加载字体
+    function preloadFonts() {
+      // 创建一个使用目标字体的隐藏元素
+      const preloadElement = document.createElement('div');
+      preloadElement.style.fontFamily = "'Huiwen-mincho', '汇文明朝体', serif";
+      preloadElement.style.position = 'absolute';
+      preloadElement.style.visibility = 'hidden';
+      preloadElement.style.height = '0';
+      preloadElement.textContent = '字体预加载';
+      document.body.appendChild(preloadElement);
+      
+      // 使用FontFaceObserver API (如果可用)
+      if (window.FontFace) {
+        try {
+          const font = new FontFace('Huiwen-mincho', 
+            "url('https://chinese-fonts-cdn.deno.dev/packages/hwmct/dist/汇文明朝体/result.woff2') format('woff2')",
+            { display: 'swap' }
+          );
+          
+          font.load().then(() => {
+            document.fonts.add(font);
+            log('字体已加载');
+          }).catch(err => {
+            log('字体加载失败: ' + err);
+          });
+        } catch (e) {
+          log('FontFace API 不可用: ' + e);
+        }
+      }
+    }
+    
     // 同步编辑内容到导出卡片，确保换行符被保留
     function syncContentToExport() {
       // 同步标题
@@ -678,7 +723,22 @@
         exportLines.style.textAlign = 'center';
         exportLines.style.width = '100%';
         exportLines.style.margin = '0 auto';
+        exportLines.style.fontFamily = "'Huiwen-mincho', '汇文明朝体', serif";
       }
+      
+      //       // 确保导出卡片中的作者容器不会换行
+      const exportAuthorContainer = document.querySelector('.export-author-container');
+      if (exportAuthorContainer) {
+        exportAuthorContainer.style.whiteSpace = 'nowrap';
+        exportAuthorContainer.style.display = 'flex';
+        exportAuthorContainer.style.alignItems = 'center';
+      }
+      
+      // 确保所有导出元素都应用了正确的字体
+      const exportElements = document.querySelectorAll('.export-title, .export-lines, .export-author, .export-author-prefix');
+      exportElements.forEach(el => {
+        el.style.fontFamily = "'Huiwen-mincho', '汇文明朝体', serif";
+      });
     }
     
     // 复制纤维效果到导出卡片
@@ -716,7 +776,7 @@
         
         // 同步内容到导出卡片
         syncContentToExport();
-		        
+        
         // 复制纤维效果
         copyFibersToExport();
         
@@ -747,9 +807,15 @@
         exportContent.style.padding = '20px';
         exportContent.style.boxSizing = 'border-box';
         
-        // 等待一小段时间确保DOM更新完成
-        log("等待DOM更新...");
-        await new Promise(resolve => setTimeout(resolve, 500));
+        // 强制应用字体
+        document.querySelectorAll('#exportCard .export-title, #exportCard .export-lines, #exportCard .export-author, #exportCard .export-author-prefix')
+          .forEach(el => {
+            el.style.fontFamily = "'Huiwen-mincho', '汇文明朝体', serif !important";
+          });
+        
+        // 等待一小段时间确保DOM更新完成和字体加载
+        log("等待DOM更新和字体加载...");
+        await new Promise(resolve => setTimeout(resolve, 800));
         
         log("开始生成图片");
         
@@ -807,7 +873,10 @@
             const dataUrl = await domtoimage.toPng(exportCard, {
               quality: 0.95,
               bgcolor: '#ffffff',
-              cacheBust: true
+              cacheBust: true,
+              style: {
+                'font-family': "'Huiwen-mincho', '汇文明朝体', serif !important"
+              }
             });
             
             // 隐藏导出卡片
@@ -888,12 +957,12 @@
                 
                 // 绘制标题
                 const title = document.getElementById('exportTitle').textContent;
-                ctx.font = '28px "Huiwen-mincho"';
+                ctx.font = '28px "Huiwen-mincho", "汇文明朝体", serif';
                 ctx.fillText(title, canvas.width/2, 80);
                 
                 // 绘制诗句
                 const lines = document.getElementById('exportLines').textContent.split('\n');
-                ctx.font = '22px "Huiwen-mincho"';
+                ctx.font = '22px "Huiwen-mincho", "汇文明朝体", serif';
                 let y = 160;
                 lines.forEach(line => {
                   if (line.trim()) {
@@ -905,7 +974,7 @@
                 // 绘制作者
                 const author = document.getElementById('exportAuthor').textContent;
                 ctx.textAlign = 'right';
-                ctx.font = '16px "Huiwen-mincho"';
+                ctx.font = '16px "Huiwen-mincho", "汇文明朝体", serif';
                 ctx.fillText(`—— by ${author}`, canvas.width - 60, canvas.height - 60);
                 
                 // 导出简化版图片
@@ -1062,6 +1131,9 @@
     // 初始化
     document.addEventListener('DOMContentLoaded', function() {
       console.log('DOM加载完成，初始化应用...');
+      
+      // 预加载字体
+      preloadFonts();
       
       // 检测设备性能
       const performanceLevel = checkDeviceCapabilities();

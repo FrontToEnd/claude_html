@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chuck的自我介绍</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&family=Noto+Serif+SC:wght@400;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Noto Sans SC', Tahoma, Arial, sans-serif;
+            background-color: #f4f4f4;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+        .editor-card {
+            width: 375px;
+            background-color: #1e1e1e;
+            border-radius: 8px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+            font-family: 'JetBrains Mono', monospace;
+        }
+        .editor-header {
+            background-color: #252526;
+            padding: 8px 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .file-tab {
+            background-color: #1e1e1e;
+            color: #fff;
+            padding: 2px 10px;
+            border-radius: 4px 4px 0 0;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .line-number {
+            color: #6e7681;
+            text-align: right;
+            padding-right: 12px;
+            user-select: none;
+            font-size: 12px;
+        }
+        .code-line {
+            display: flex;
+        }
+        .keyword {
+            color: #569cd6;
+        }
+        .function {
+            color: #dcdcaa;
+        }
+        .string {
+            color: #ce9178;
+        }
+        .comment {
+            color: #6A9955;
+            font-style: italic;
+        }
+        .variable {
+            color: #9cdcfe;
+        }
+        .highlight {
+            background-color: rgba(197, 214, 213, 0.1);
+        }
+        .value {
+            color: #b5cea8;
+        }
+        .editor-content {
+            padding: 8px 0;
+            line-height: 1.6;
+            font-size: 14px;
+        }
+        .header-actions {
+            display: flex;
+            gap: 12px;
+        }
+        .action-button {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+        .close {
+            background-color: #ff5f57;
+        }
+        .minimize {
+            background-color: #febc2e;
+        }
+        .maximize {
+            background-color: #28c840;
+        }
+        .footer {
+            background-color: #252526;
+            color: #999;
+            display: flex;
+            justify-content: space-between;
+            padding: 4px 12px;
+            font-size: 12px;
+        }
+        .skill-badge {
+            background-color: #2d2d2d;
+            color: #ccc;
+            padding: 2px 6px;
+            border-radius: 4px;
+            margin-right: 4px;
+            font-size: 10px;
+        }
+        .interactive-section {
+            background-color: #252526;
+            border-top: 1px solid #333;
+            padding: 12px;
+            font-family: 'Noto Sans SC', sans-serif;
+        }
+        .growth-chart {
+            height: 60px;
+            background-color: #1e1e1e;
+            margin-top: 8px;
+            border-radius: 4px;
+            padding: 8px;
+            display: flex;
+            align-items: flex-end;
+            gap: 8px;
+            justify-content: space-around;
+        }
+        .growth-bar {
+            flex-grow: 1;
+            background: linear-gradient(to top, #2188ff, #79b8ff);
+            border-radius: 2px;
+        }
+        .ai-visual {
+            margin: 10px 0;
+            text-align: center;
+        }
+        .book-shelf {
+            height: 40px;
+            background-color: #3a3a3a;
+            border-radius: 4px;
+            margin-top: 12px;
+            display: flex;
+            align-items: flex-end;
+            padding: 4px;
+            justify-content: center;
+            gap: 4px;
+        }
+        .book {
+            height: 28px;
+            width: 16px;
+            background-color: #b5cea8;
+            border-radius: 2px 0 0 2px;
+            position: relative;
+        }
+        .book:nth-child(odd) {
+            background-color: #569cd6;
+            height: 32px;
+        }
+        .book:nth-child(3n) {
+            background-color: #ce9178;
+            height: 30px;
+        }
+        .terminal-section {
+            margin-top: 12px;
+            background-color: #1e1e1e;
+            border-radius: 4px;
+            padding: 8px 12px;
+            color: #ddd;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+        }
+        .prompt {
+            color: #2188ff;
+            margin-right: 8px;
+        }
+        .terminal-output {
+            color: #aaa;
+            margin-left: 16px;
+        }
+        .terminal-command {
+            margin-bottom: 6px;
+        }
+        .interaction-cta {
+            background-color: #2188ff;
+            color: white;
+            text-align: center;
+            padding: 8px;
+            border-radius: 4px;
+            margin-top: 12px;
+            font-weight: 500;
+            font-size: 14px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .interaction-cta:hover {
+            background-color: #1c76db;
+        }
+    </style>
+</head>
+<body>
+    <div class="editor-card">
+        <!-- 编辑器头部 -->
+        <div class="editor-header">
+            <div class="header-actions">
+                <div class="action-button close"></div>
+                <div class="action-button minimize"></div>
+                <div class="action-button maximize"></div>
+            </div>
+            <div class="file-tab">
+                <i class="fas fa-user-astronaut text-blue-400 mr-1"></i>
+                chuck_profile.js
+            </div>
+            <div class="text-gray-400 text-xs">
+                <i class="fas fa-code-branch mr-1"></i>main
+            </div>
+        </div>
+        
+        <!-- 代码内容 -->
+        <div class="editor-content px-4 text-gray-200">
+            <div class="code-line highlight">
+                <div class="line-number">1</div>
+                <div><span class="comment">// chuck自我介绍 - 程序员、读书爱好者、AI探索者</span></div>
+            </div>
+            <div class="code-line">
+                <div class="line-number">2</div>
+                <div><span class="keyword">const</span> <span class="variable">chuck</span> = {</div>
+            </div>
+            <div class="code-line">
+                <div class="line-number">3</div>
+                <div>&nbsp;&nbsp;<span class="variable">identity</span>: <span class="string">"程序员 | 读书爱好者 | AI探索者"</span>,</div>
+            </div>
+            <div class="code-line">
+                <div class="line-number">4</div>
+                <div>&nbsp;&nbsp;<span class="variable">username</span>: <span class="string">"chuck"</span>, <span class="comment">// 全网同名</span></div>
+            </div>
+            <div class="code-line">
+                <div class="line-number">5</div>
+                <div>&nbsp;</div>
+            </div>
+            <div class="code-line highlight">
+                <div class="line-number">6</div>
+                <div>&nbsp;&nbsp;<span class="variable">traits</span>: [</div>
+            </div>
+            <div class="code-line highlight">
+                <div class="line-number">7</div>
+                <div>&nbsp;&nbsp;&nbsp;&nbsp;{<span class="variable">key</span>: <span class="string">"动手能力"</span>, <span class="variable">value</span>: <span class="value">95</span>},</div>
+            </div>
+            <div class="code-line highlight">
+                <div class="line-number">8</div>
+                <div>&nbsp;&nbsp;&nbsp;&nbsp;{<span class="variable">key</span>: <span class="string">"好奇心"</span>, <span class="variable">value</span>: <span class="value">98</span>},</div>
+            </div>
+            <div class="code-line highlight">
+                <div class="line-number">9</div>
+                <div>&nbsp;&nbsp;&nbsp;&nbsp;{<span class="variable">key</span>: <span class="string">"AI热爱度"</span>, <span class="variable">value</span>: <span class="value">97</span>}</div>
+            </div>
+            <div class="code-line">
+                <div class="line-number">10</div>
+                <div>&nbsp;&nbsp;],</div>
+            </div>
+            <div class="code-line">
+                <div class="line-number">11</div>
+                <div>&nbsp;</div>
+            </div>
+            <div class="code-line">
+                <div class="line-number">12</div>
+                <div>&nbsp;&nbsp;<span class="variable">currentProjects</span>: {</div>
+            </div>
+            <div class="code-line">
+                <div class="line-number">13</div>
+                <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="variable">readingCommunity</span>: <span class="string">"运营读书社群"</span>,</div>
+            </div>
+            <div class="code-line">
+                <div class="line-number">14</div>
+                <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="variable">dailyHabits</span>: [<span class="string">"阅读"</span>, <span class="string">"写作"</span>, <span class="string">"运动"</span>, <span class="string">"英语"</span>]</div>
+            </div>
+            <div class="code-line">
+                <div class="line-number">15</div>
+                <div>&nbsp;&nbsp;},</div>
+            </div>
+            <div class="code-line">
+                <div class="line-number">16</div>
+                <div>&nbsp;</div>
+            </div>
+            <div class="code-line">
+                <div class="line-number">17</div>
+                <div>&nbsp;&nbsp;<span class="variable">skills</span>: [</div>
+            </div>
+            <div class="code-line">
+                <div class="line-number">18</div>
+                <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="string">"分享知识"</span>,</div>
+            </div>
+            <div class="code-line">
+                <div class="line-number">19</div>
+                <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="string">"实践创意"</span>,</div>
+            </div>
+            <div class="code-line">
+                <div class="line-number">20</div>
+                <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="string">"创建SOP"</span>,</div>
+            </div>
+            <div class="code-line">
+                <div class="line-number">21</div>
+                <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="string">"挖掘信息"</span>,</div>
+            </div>
+            <div class="code-line">
+                <div class="line-number">22</div>
+                <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="string">"持之以恒"</span></div>
+            </div>
+            <div class="code-line">
+                <div class="line-number">23</div>
+                <div>&nbsp;&nbsp;],</div>
+            </div>
+            <div class="code-line">
+                <div class="line-number">24</div>
+                <div>&nbsp;</div>
+            </div>
+            <div class="code-line">
+                <div class="line-number">25</div>
+                <div>&nbsp;&nbsp;<span class="function">connect</span>(<span class="variable">person</span>) {</div>
+            </div>
+            <div class="code-line">
+                <div class="line-number">26</div>
+                <div>&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">if</span> (</div>
+            </div>
+            <div class="code-line">
+                <div class="line-number">27</div>
+                <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="variable">person</span>.<span class="variable">interests</span>.<span class="function">includes</span>(<span class="string">"阅读"</span>) || </div>
+            </div>
+            <div class="code-line">
+                <div class="line-number">28</div>
+                <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="variable">person</span>.<span class="variable">interests</span>.<span class="function">includes</span>(<span class="string">"写作"</span>) || </div>
+            </div>
+            <div class="code-line">
+                <div class="line-number">29</div>
+                <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="variable">person</span>.<span class="variable">interests</span>.<span class="function">includes</span>(<span class="string">"AI"</span>)</div>
+            </div>
+            <div class="code-line">
+                <div class="line-number">30</div>
+                <div>&nbsp;&nbsp;&nbsp;&nbsp;) {</div>
+            </div>
+            <div class="code-line">
+                <div class="line-number">31</div>
+                <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="keyword">return</span> <span class="string">"欢迎找我讨论和交流～"</span>;</div>
+            </div>
+            <div class="code-line">
+                <div class="line-number">32</div>
+                <div>&nbsp;&nbsp;&nbsp;&nbsp;}</div>
+            </div>
+            <div class="code-line">
+                <div class="line-number">33</div>
+                <div>&nbsp;&nbsp;}</div>
+            </div>
+            <div class="code-line">
+                <div class="line-number">34</div>
+                <div>};</div>
+            </div>
+        </div>
+
+        
+        <!-- 交互区域 -->
+        <div class="interactive-section">
+            
+            <div class="terminal-section">
+                <div class="terminal-command">
+                    <span class="prompt">chuck@world:~$</span>ls -l strengths
+                </div>
+                <div class="terminal-output">
+                    动手实践 知识分享 持之以恒 创意实现 信息管理
+                </div>
+                <div class="terminal-command mt-2">
+                    <span class="prompt">chuck@world:~$</span>echo $MOTTO
+                </div>
+                <div class="terminal-output">
+                    "保持好奇心，用行动创造价值"
+                </div>
+            </div>
+            
+            <div class="interaction-cta">
+                发起对话，交流想法 →
+            </div>
+        </div>
+        
+        <!-- 页脚 -->
+        <div class="footer">
+            <div>
+                <i class="fas fa-book-reader mr-1"></i>2025
+            </div>
+            <div>
+                <i class="fas fa-code-branch mr-1"></i>chuck
+            </div>
+            <div>
+                <i class="fas fa-star mr-1"></i>持续更新
+            </div>
+        </div>
+    </div>
+</body>
+</html>

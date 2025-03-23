@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Golden Quote</title>
+  <style>
+    :root {
+      --gold: #D4AF37;
+      --sapphire: #0F52BA;
+      --texture: repeating-radial-gradient(
+        circle at 50% 50%,
+        rgba(200,200,200,0.1) 0px,
+        rgba(200,200,200,0.1) 2px,
+        transparent 2px,
+        transparent 5px
+      );
+    }
+
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      background: #f0f0f0;
+    }
+
+    .card {
+      position: relative;
+      width: 80vw;
+      max-width: 600px;
+      height: 400px;
+      background: 
+        var(--texture),
+        linear-gradient(45deg, var(--gold) 0px 6px, transparent 6px 100%),
+        linear-gradient(-45deg, var(--sapphire) 0px 6px, transparent 6px 100%),
+        white;
+      background-size: cover;
+      border-radius: 20px;
+      padding: 2rem;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.15);
+      overflow: hidden;
+    }
+
+    .portrait {
+      position: absolute;
+      top: 30px;
+      left: 30px;
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      border: 3px solid var(--sapphire);
+      box-shadow: 0 0 20px rgba(15,82,186,0.3);
+      z-index: 2;
+    }
+
+    .title-group {
+      position: absolute;
+      top: 30px;
+      right: 30px;
+      text-align: right;
+    }
+
+    .title-cn {
+      color: var(--sapphire);
+      font: 600 2.2rem/1.2 'Noto Serif SC';
+      margin: 0;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .title-en {
+      color: var(--gold);
+      font: 500 1.2rem/1.5 'Playfair Display';
+      margin: 0;
+      letter-spacing: 1px;
+    }
+
+    .quote-symbol {
+      position: absolute;
+      font: 800 8rem 'Arial';
+      color: rgba(15,82,186,0.15);
+      top: 120px;
+      left: 180px;
+    }
+
+    .quote-text {
+      position: absolute;
+      width: 60%;
+      right: 40px;
+      bottom: 60px;
+      font: 500 1.4rem/1.8 'Noto Serif SC';
+      text-align: right;
+      color: #333;
+    }
+
+    .deco-wave {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 40px;
+      background: url("data:image/svg+xml,%3Csvg viewBox='0 0 100 20' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 15 Q25 5 50 15 T100 15' stroke='%230F52BA' fill='none' stroke-width='2' opacity='0.3'/%3E%3C/svg%3E");
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <img src="portrait.jpg" alt="人物肖像" class="portrait">
+    <div class="title-group">
+      <h1 class="title-cn">永恒智慧</h1>
+      <p class="title-en">Timeless Wisdom</p>
+    </div>
+    <div class="quote-symbol">“</div>
+    <p class="quote-text">
+      真正的发现之旅不在于寻找新的景观，而在于拥有新的眼光
+      <br>
+      ——马塞尔·普鲁斯特
+    </p>
+    <div class="deco-wave"></div>
+  </div>
+</body>
+</html>

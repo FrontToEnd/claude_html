@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html>
+<head>
+<link rel='stylesheet' href='https://unpkg.com/@chinese-fonts/hwmct@2.0.1/dist/%E6%B1%87%E6%96%87%E6%98%8E%E6%9C%9D%E4%BD%93/result.css' />
+<style>
+body {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  margin: 0;
+  background: #f5f5f5;
+  font-family: 'Huiwen-mincho', serif;
+}
+
+.card {
+  position: relative;
+  width: 360px;
+  height: 640px;
+  background: linear-gradient(to bottom, #ffffff, #f8faf8);
+  border-radius: 24px;
+  padding: 40px;
+  box-sizing: border-box;
+  box-shadow: 
+    0 10px 30px rgba(76, 175, 80, 0.1),
+    0 1px 3px rgba(76, 175, 80, 0.05);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.background-circle {
+  position: absolute;
+  top: -100px;
+  left: -100px;
+  width: 300px;
+  height: 300px;
+  background: linear-gradient(135deg, 
+    rgba(76, 175, 80, 0.15),
+    rgba(69, 160, 73, 0.05));
+  border-radius: 50%;
+  filter: blur(20px);
+}
+
+.background-circle-2 {
+  position: absolute;
+  bottom: -150px;
+  right: -150px;
+  width: 350px;
+  height: 350px;
+  background: linear-gradient(225deg, 
+    rgba(76, 175, 80, 0.12),
+    rgba(69, 160, 73, 0.04));
+  border-radius: 50%;
+  filter: blur(25px);
+}
+
+.content {
+  position: relative;
+  z-index: 1;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.avatar-container {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+  margin-bottom: 40px;
+}
+
+.avatar {
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  overflow: hidden;
+  box-shadow: 
+    0 8px 24px rgba(76, 175, 80, 0.15),
+    0 2px 8px rgba(76, 175, 80, 0.1),
+    inset 0 0 0 2px rgba(255, 255, 255, 0.8);
+  border: 3px solid rgba(76, 175, 80, 0.3);
+}
+
+.avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transform: scale(1.02);
+}
+
+.text-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 20px 0;
+}
+
+.chinese-text {
+  font-size: 28px;
+  background: linear-gradient(135deg, #2e7d32, #66bb6a);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  line-height: 1.8;
+  letter-spacing: 3px;
+  text-align: center;
+  text-shadow: 0 2px 4px rgba(76, 175, 80, 0.1);
+}
+
+.signature-container {
+  position: relative;
+  text-align: right;
+  padding: 20px 20px;
+}
+
+.signature {
+  display: inline-block;
+  color: #2e7d32;
+  font-size: 24px;
+  font-weight: 500;
+  letter-spacing: 2px;
+  padding: 5px 15px;
+  position: relative;
+  z-index: 1;
+}
+
+.signature::before {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 4px;
+  background: rgba(76, 175, 80, 0.1);
+  z-index: -1;
+  transform: skewX(-12deg);
+}
+
+/* 新增时间容器样式 */
+.time-container {
+  text-align: right;
+  padding: 0 20px 10px;
+  color: #66bb6a;
+  font-size: 16px;
+  letter-spacing: 1px;
+  opacity: 0.85;
+}
+
+.decorative-line {
+  position: absolute;
+  bottom: 30px;
+  right: 30px;
+  width: 120px;
+  height: 2px;
+  background: linear-gradient(90deg, 
+    transparent,
+    rgba(76, 175, 80, 0.3) 20%,
+    rgba(76, 175, 80, 0.6) 60%,
+    #4CAF50);
+}
+
+@keyframes float {
+  0% { transform: translateY(0px) rotate(0deg); }
+  50% { transform: translateY(-10px) rotate(1deg); }
+  100% { transform: translateY(0px) rotate(0deg); }
+}
+
+.floating-element {
+  animation: float 6s ease-in-out infinite;
+}
+
+.card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 100%;
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0.8) 100%
+  );
+  pointer-events: none;
+}
+
+.card::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  border-radius: 24px;
+  padding: 1px;
+  background: linear-gradient(135deg, 
+    rgba(76, 175, 80, 0.3),
+    rgba(76, 175, 80, 0.1));
+  -webkit-mask: 
+    linear-gradient(#fff 0 0) content-box, 
+    linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+}
+</style>
+</head>
+<body>
+<div class="card">
+<div class="background-circle"></div>
+<div class="background-circle-2"></div>
+<div class="content">
+  <div class="avatar-container">
+    <div class="avatar floating-element">
+      <img src="https://res.weread.qq.com/wravatar/WV0022-QfMBPSGFOHXl_PybEZGsZf1/120" alt="avatar">
+    </div>
+  </div>
+  <div class="text-content">
+    <div class="chinese-text">
+      这里是金句。
+    </div>
+  </div>
+  <div class="time-container">
+    2024年2月18日
+  </div>
+  <div class="signature-container">
+    <div class="signature">— chuck</div>
+  </div>
+</div>
+</div>
+<script>
+// 获取当前日期并格式化
+function formatDate() {
+const date = new Date();
+const year = date.getFullYear();
+const month = date.getMonth() + 1;
+const day = date.getDate();
+return `${year}年${month}月${day}日`;
+}
+
+// 更新时间显示
+document.querySelector('.time-container').textContent = formatDate();
+</script>
+</body>
+</html>
